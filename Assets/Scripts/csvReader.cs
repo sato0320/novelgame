@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 //TextMeshProを使う時に必要な機能
 using TMPro;
+using UnityEngine.UIElements;
+using UnityEngine.Assertions.Must;
+using Unity.VisualScripting;
 
 public class csvReader : MonoBehaviour
 {
@@ -51,6 +55,9 @@ public class csvReader : MonoBehaviour
     //シナリオエンドフラッグ
     public bool ScenarioEndFlag = false;
 
+    [SerializeField] UnityEngine.UI.Image[] _backgrounds;
+    [SerializeField] UnityEngine.UI.Image[] _characters;
+
     private void Start()
     {
         //csvファイルをstring形式で読み込む
@@ -60,7 +67,7 @@ public class csvReader : MonoBehaviour
         //Resources.Load : resourcesフォルダの中にあるデータを取得して変数に格納すること
 
         //_csvFileという名前の変数にResourcesフォルダの中にある"testCSV"という名前のデータ(TextAsset型)を取得して格納する
-        _csvFile = Resources.Load("testCSV") as TextAsset; // Resouces下のCSV読み込み
+        _csvFile = Resources.Load("ScenarioCSV") as TextAsset; // Resouces下のCSV読み込み
 
         //unity上で扱いやすい形に変形する
         StringReader reader = new StringReader(_csvFile.text);
@@ -76,6 +83,7 @@ public class csvReader : MonoBehaviour
         //csvDatas[行][列]を指定して値を自由に取り出せる
         Debug.Log(_csvDataList[0][0]);
         Debug.Log(_csvDataList[0][1]);
+        Debug.Log(_csvDataList[0][4]);
     }
 
     //文字を一文字ずつ表示する
@@ -106,6 +114,12 @@ public class csvReader : MonoBehaviour
 
         //メッセージ表示処理を呼び出す
         MessageTextView();
+
+        //背景
+        Background();
+
+        //キャラ
+        CharacterImage();
     }
 
     //名前表示用の処理
@@ -251,5 +265,59 @@ public class csvReader : MonoBehaviour
         //押されたボタンの位置を情報として表示する
         //押されたボタンの位置を情報として渡す
         JumpMessageRow(_getSelectCommand[SelectCommandValue][3]);
+    }
+
+    void Background()
+    {
+        string backgroundCheck = _csvDataList[_rowsCount][4];
+
+        switch (backgroundCheck)
+        {
+            case "groundA":
+                Backgroundfalse();
+                _backgrounds[0].enabled = true;
+                break;
+            case "groundB":
+            Backgroundfalse();
+                _backgrounds[1].enabled = true;
+                break;
+        }
+
+    }
+
+    void Backgroundfalse()
+    {
+        _backgrounds[0].enabled = false;
+        _backgrounds[1].enabled = false;
+    }
+    
+    void CharacterImage()
+    {
+        string characterCheck = _csvDataList[_rowsCount][1];
+
+        switch (characterCheck)
+        {
+            case "？？？":
+                Characterfalse();
+                _characters[0].color = Color.white;
+                break;
+            case "フィオーレ":
+                Characterfalse();
+                _characters[1].color = Color.white;
+                break;
+            case "ステラ":
+                Characterfalse();
+                _characters[0].color = Color.white;
+                break;
+            case "":
+                Characterfalse();
+                break;
+        }
+    }
+    
+    void Characterfalse()
+    {
+        _characters[0].color = Color.gray;
+        _characters[1].color = Color.gray;
     }
 }
